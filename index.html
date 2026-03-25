@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K/STYLE — Korean Fashion Magazine</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+KR:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --cream: #f5f0e8;
+    --red: #c8002a;
+    --gold: #b8965a;
+    --muted: #8a8078;
+    --light: #ede8df;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--red);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), width 0.3s, height 0.3s, border-color 0.3s;
+  }
+  body:hover .cursor-ring { border-color: var(--red); }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* ──────────── NAV ──────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 3rem;
+    mix-blend-mode: multiply;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 0; right: 0;
+    height: 1px; background: var(--red);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-issue {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
+  /* ──────────── HERO ──────────── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    background: var(--ink);
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 6rem 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent, transparent 60px,
+      rgba(255,255,255,0.015) 60px, rgba(255,255,255,0.015) 61px
+    );
+  }
+  .hero-issue-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .hero-issue-tag::before {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--red);
+  }
+  .hero-title {
+    font-size: clamp(5rem, 10vw, 9rem);
+    font-weight: 300;
+    line-height: 0.9;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-subtitle {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(245,240,232,0.5);
+    letter-spacing: 0.15em;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-decoration: none;
+    border: 1px solid rgba(245,240,232,0.2);
+    padding: 1rem 2rem;
+    transition: all 0.3s;
+    width: fit-content;
+  }
+  .hero-cta:hover {
+    background: var(--red);
+    border-color: var(--red);
+  }
+  .hero-cta span { transition: transform 0.3s; }
+  .hero-cta:hover span { transform: translateX(6px); }
+
+  .hero-right {
+    background: var(--light);
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-visual {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hero-big-letter {
+    font-size: 55vw;
+    font-weight: 600;
+    color: rgba(13,13,13,0.04);
+    line-height: 1;
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    user-select: none;
+  }
+  .hero-card {
+    position: relative;
+    z-index: 2;
+    background: var(--ink);
+    width: 260px;
+    padding: 2.5rem 2rem;
+    transform: rotate(-3deg);
+    box-shadow: 20px 20px 60px rgba(0,0,0,0.15);
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: rotate(-3deg) translateY(0); }
+    50% { transform: rotate(-3deg) translateY(-12px); }
+  }
+  .hero-card-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-card-title {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  .hero-card-sub {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+  .hero-card-bar {
+    width: 100%; height: 1px;
+    background: rgba(245,240,232,0.1);
+    margin: 1.5rem 0;
+  }
+  .hero-card-body {
+    font-size: 0.75rem;
+    color: rgba(245,240,232,0.4);
+    line-height: 1.8;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .hero-card-2 {
+    position: absolute;
+    top: 50%; left: 55%;
+    width: 180px;
+    background: var(--red);
+    padding: 1.5rem;
+    transform: rotate(5deg) translateY(-30%);
+    z-index: 1;
+    animation: float2 7s ease-in-out infinite;
+  }
+  @keyframes float2 {
+    0%, 100% { transform: rotate(5deg) translateY(-30%); }
+    50% { transform: rotate(5deg) translateY(-40%); }
+  }
+  .hero-card-2 p {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.75rem;
+    color: var(--cream);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ──────────── TICKER ──────────── */
+  .ticker {
+    background: var(--red);
+    padding: 0.75rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-inner {
+    display: inline-flex;
+    animation: ticker 20s linear infinite;
+    gap: 0;
+  }
+  .ticker-inner span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--cream);
+    text-transform: uppercase;
+    padding: 0 3rem;
+  }
+  .ticker-inner span.dot {
+    color: rgba(245,240,232,0.4);
+    padding: 0;
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ──────────── ABOUT ──────────── */
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0;
+    padding: 8rem 0;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+  .about-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 0.4rem;
+  }
+  .about-content {}
+  .about-heading {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.02em;
+  }
+  .about-heading em { font-style: italic; color: var(--red); }
+  .about-body {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 2;
+    color: #3a3530;
+    max-width: 600px;
+    margin-bottom: 3rem;
+  }
+  .about-stats {
+    display: flex; gap: 4rem;
+    border-top: 1px solid rgba(13,13,13,0.1);
+    padding-top: 2.5rem;
+  }
+  .stat-num {
+    font-size: 3rem;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+  .stat-num sup {
+    font-size: 1rem;
+    color: var(--red);
+    vertical-align: super;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+
+  /* ──────────── EDITORIAL ──────────── */
+  .editorial-section {
+    background: var(--ink);
+    padding: 8rem 4rem;
+  }
+  .section-header {
+    display: flex; align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid rgba(245,240,232,0.1);
+    padding-bottom: 1.5rem;
+  }
+  .section-title-white {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: -0.02em;
+  }
+  .section-title-white em { font-style: italic; color: var(--gold); }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: rgba(245,240,232,0.25);
+  }
+
+  .editorial-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2px;
+  }
+  .editorial-card {
+    position: relative;
+    overflow: hidden;
+    background: #1a1a1a;
+    transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+    cursor: pointer;
+  }
+  .editorial-card:hover { transform: scale(0.98); }
+  .editorial-card-inner {
+    padding: 2.5rem 2rem;
+    height: 380px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .editorial-card.featured .editorial-card-inner { height: 380px; }
+  .ec-bg {
+    position: absolute; inset: 0;
+    opacity: 0.06;
+    font-size: 12rem;
+    font-weight: 600;
+    line-height: 1;
+    overflow: hidden;
+    display: flex; align-items: flex-end;
+    padding: 0 1rem 0;
+    color: var(--cream);
+    pointer-events: none;
+    transition: opacity 0.5s;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .editorial-card:hover .ec-bg { opacity: 0.12; }
+  .ec-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+  .ec-title {
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .editorial-card:not(.featured) .ec-title { font-size: 1.1rem; }
+  .ec-title em { font-style: italic; color: var(--gold); }
+  .ec-meta {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ec-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.25);
+  }
+  .ec-arrow {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(245,240,232,0.15);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    color: var(--cream);
+    transition: all 0.3s;
+  }
+  .editorial-card:hover .ec-arrow {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
+  /* ──────────── FEATURES ──────────── */
+  .features {
+    padding: 8rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-header-light {
+    display: flex; align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid rgba(13,13,13,0.1);
+    padding-bottom: 1.5rem;
+  }
+  .section-title {
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+  .section-title em { font-style: italic; color: var(--red); }
+  .view-all {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--muted);
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .view-all:hover { color: var(--red); border-color: var(--red); }
+
+  .features-list { display: flex; flex-direction: column; gap: 0; }
+  .feature-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr auto;
+    align-items: center;
+    gap: 3rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(13,13,13,0.08);
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+  .feature-row:hover { background: rgba(13,13,13,0.02); }
+  .feature-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .feature-category {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.5rem;
+  }
+  .feature-title {
+    font-size: 1.3rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .feature-title em { font-style: italic; }
+  .feature-desc {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .feature-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid rgba(13,13,13,0.15);
+    padding: 0.4rem 0.8rem;
+    white-space: nowrap;
+    transition: all 0.3s;
+  }
+  .feature-row:hover .feature-tag {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  /* ──────────── MANIFESTO ──────────── */
+  .manifesto {
+    background: var(--red);
+    padding: 10rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .manifesto::before {
+    content: '한';
+    position: absolute;
+    font-size: 60vw;
+    font-weight: 700;
+    color: rgba(0,0,0,0.06);
+    line-height: 1;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Noto Serif KR', serif;
+    pointer-events: none;
+  }
+  .manifesto-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.6);
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .manifesto-text {
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.2;
+    max-width: 900px;
+    margin: 0 auto;
+    letter-spacing: -0.02em;
+    position: relative;
+  }
+  .manifesto-text em { font-style: italic; }
+
+  /* ──────────── CONTACT ──────────── */
+  .contact {
+    padding: 8rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .contact-left {}
+  .contact-heading {
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+  }
+  .contact-heading em { font-style: italic; color: var(--red); }
+  .contact-body {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 2;
+    margin-bottom: 3rem;
+  }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-link {
+    display: flex; align-items: center; gap: 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-link::before {
+    content: '→';
+    color: var(--red);
+    transition: transform 0.3s;
+  }
+  .contact-link:hover { color: var(--red); }
+  .contact-link:hover::before { transform: translateX(4px); }
+
+  .contact-right {
+    border-left: 1px solid rgba(13,13,13,0.1);
+    padding-left: 4rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .contact-info-item {
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(13,13,13,0.08);
+  }
+  .contact-info-item:first-child { border-top: 1px solid rgba(13,13,13,0.08); }
+  .ci-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .ci-value {
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+  }
+
+  /* ──────────── FOOTER ──────────── */
+  footer {
+    background: var(--ink);
+    padding: 3rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--cream);
+    letter-spacing: 0.3em;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.25);
+    text-transform: uppercase;
+  }
+  .footer-kr {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    font-weight: 300;
+  }
+
+  /* ──────────── ANIMATIONS ──────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .about { grid-template-columns: 1fr; gap: 2rem; }
+    .editorial-grid { grid-template-columns: 1fr; }
+    .contact { grid-template-columns: 1fr; }
+    .contact-right { border-left: none; padding-left: 0; border-top: 1px solid rgba(13,13,13,0.1); padding-top: 3rem; }
+    nav { padding: 1.5rem 2rem; }
+    .nav-links { gap: 1.5rem; }
+    .about, .features, .contact { padding-left: 2rem; padding-right: 2rem; }
+    .editorial-section { padding: 5rem 2rem; }
+    .manifesto { padding: 6rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">K/Style</a>
+  <ul class="nav-links">
+    <li><a href="#about">소개</a></li>
+    <li><a href="#editorial">에디토리얼</a></li>
+    <li><a href="#features">피처</a></li>
+    <li><a href="#contact">컨택</a></li>
+  </ul>
+  <span class="nav-issue">Issue No. 01 · 2025</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-issue-tag">Korean Fashion Editorial</div>
+    <h1 class="hero-title">K/<em>Style</em><br>매거진</h1>
+    <p class="hero-subtitle">한국 패션의 현재와 미래를<br>기록하는 에디토리얼</p>
+    <a href="#editorial" class="hero-cta">이번 호 보기 <span>→</span></a>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="hero-big-letter">K</div>
+      <div class="hero-card">
+        <div class="hero-card-tag">Cover Story</div>
+        <div class="hero-card-title">서울의 새벽, 패션의 시작</div>
+        <div class="hero-card-sub">성수동 스트릿 리포트</div>
+        <div class="hero-card-bar"></div>
+        <div class="hero-card-body">"패션은 언어다. 한국의 거리는 매일 새로운 문장을 쓴다."</div>
+      </div>
+      <div class="hero-card-2">
+        <p>트렌드를 넘어<br>문화를 기록하다</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>K-Fashion</span><span class="dot">·</span>
+    <span>Street Style</span><span class="dot">·</span>
+    <span>Seoul Trends</span><span class="dot">·</span>
+    <span>한국 패션</span><span class="dot">·</span>
+    <span>에디토리얼</span><span class="dot">·</span>
+    <span>스트릿 컬처</span><span class="dot">·</span>
+    <span>K-Fashion</span><span class="dot">·</span>
+    <span>Street Style</span><span class="dot">·</span>
+    <span>Seoul Trends</span><span class="dot">·</span>
+    <span>한국 패션</span><span class="dot">·</span>
+    <span>에디토리얼</span><span class="dot">·</span>
+    <span>스트릿 컬처</span><span class="dot">·</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about reveal" id="about">
+  <div class="about-label">About</div>
+  <div class="about-content">
+    <h2 class="about-heading">패션으로 말하는<br><em>한국의 이야기</em></h2>
+    <p class="about-body">
+      K/Style은 한국 패션의 다양한 스펙트럼을 기록하는 에디토리얼 매거진입니다.
+      홍대의 빈티지 숍부터 청담동의 럭셔리 부티크까지,
+      스트릿의 생생한 에너지부터 런웨이의 정제된 아름다움까지—
+      우리는 한국 패션의 모든 순간을 포착합니다.
+    </p>
+    <div class="about-stats">
+      <div>
+        <div class="stat-num">48<sup>+</sup></div>
+        <div class="stat-label">Feature Stories</div>
+      </div>
+      <div>
+        <div class="stat-num">12</div>
+        <div class="stat-label">Brand Profiles</div>
+      </div>
+      <div>
+        <div class="stat-num">3<sup>K</sup></div>
+        <div class="stat-label">Street Snaps</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITORIAL -->
+<section class="editorial-section reveal" id="editorial">
+  <div class="section-header">
+    <h2 class="section-title-white">에디토리얼 <em>피처</em></h2>
+    <span class="section-num">01 / 03</span>
+  </div>
+  <div class="editorial-grid">
+    <div class="editorial-card featured">
+      <div class="editorial-card-inner">
+        <div class="ec-bg">S</div>
+        <div>
+          <div class="ec-tag">Cover Story</div>
+        </div>
+        <div>
+          <div class="ec-title">성수동의<br><em>새로운 물결</em></div>
+        </div>
+        <div class="ec-meta">
+          <span class="ec-date">2025. 03</span>
+          <div class="ec-arrow">→</div>
+        </div>
+      </div>
+    </div>
+    <div class="editorial-card">
+      <div class="editorial-card-inner">
+        <div class="ec-bg">홍</div>
+        <div><div class="ec-tag">Street</div></div>
+        <div><div class="ec-title">홍대 <em>빈티지</em><br>컬처</div></div>
+        <div class="ec-meta">
+          <span class="ec-date">2025. 02</span>
+          <div class="ec-arrow">→</div>
+        </div>
+      </div>
+    </div>
+    <div class="editorial-card">
+      <div class="editorial-card-inner">
+        <div class="ec-bg">K</div>
+        <div><div class="ec-tag">Brand</div></div>
+        <div><div class="ec-title"><em>K-Pop</em>과<br>패션의 교차점</div></div>
+        <div class="ec-meta">
+          <span class="ec-date">2025. 01</span>
+          <div class="ec-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES LIST -->
+<section class="features reveal" id="features">
+  <div class="section-header-light">
+    <h2 class="section-title">최신 <em>피처</em></h2>
+    <a href="#" class="view-all">모두 보기</a>
+  </div>
+  <div class="features-list">
+    <div class="feature-row">
+      <span class="feature-num">001</span>
+      <div>
+        <div class="feature-category">Trend Report</div>
+        <div class="feature-title">2025 봄/여름 <em>서울 트렌드</em></div>
+      </div>
+      <div class="feature-desc">색감, 실루엣, 소재—이번 시즌 서울 패션위크가 전하는 메시지를 분석합니다.</div>
+      <span class="feature-tag">S/S 2025</span>
+    </div>
+    <div class="feature-row">
+      <span class="feature-num">002</span>
+      <div>
+        <div class="feature-category">Brand Profile</div>
+        <div class="feature-title"><em>앤더슨벨</em>의 철학</div>
+      </div>
+      <div class="feature-desc">한국과 글로벌의 경계를 허무는 브랜드 앤더슨벨의 크리에이티브 디렉터를 만납니다.</div>
+      <span class="feature-tag">Interview</span>
+    </div>
+    <div class="feature-row">
+      <span class="feature-num">003</span>
+      <div>
+        <div class="feature-category">Culture</div>
+        <div class="feature-title">한복의 <em>현대적 재해석</em></div>
+      </div>
+      <div class="feature-desc">전통과 현대가 만나는 지점—신진 디자이너들이 다시 쓰는 한복 이야기.</div>
+      <span class="feature-tag">Heritage</span>
+    </div>
+    <div class="feature-row">
+      <span class="feature-num">004</span>
+      <div>
+        <div class="feature-category">Street Snap</div>
+        <div class="feature-title">압구정 <em>로데오의 봄</em></div>
+      </div>
+      <div class="feature-desc">봄 햇살 아래 포착한 압구정 로데오 거리의 패션 스냅 컬렉션.</div>
+      <span class="feature-tag">Photography</span>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <div class="manifesto-eyebrow">Editorial Manifesto</div>
+  <p class="manifesto-text">패션은 단순한 옷이 아니다.<br>그것은 <em>시대의 언어</em>이고,<br>문화의 초상이며,<br>우리 자신의 이야기다.</p>
+</section>
+
+<!-- CONTACT -->
+<section class="contact reveal" id="contact">
+  <div class="contact-left">
+    <h2 class="contact-heading">함께<br><em>만들어가요</em></h2>
+    <p class="contact-body">
+      콜라보레이션, 기고, 광고 문의 모두 환영합니다.
+      K/Style과 함께 한국 패션의 새로운 이야기를 써나갑시다.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:hello@kstyle.kr" class="contact-link">hello@kstyle.kr</a>
+      <a href="#" class="contact-link">Instagram @kstyle_mag</a>
+      <a href="#" class="contact-link">Press Kit 다운로드</a>
+    </div>
+  </div>
+  <div class="contact-right">
+    <div class="contact-info-item">
+      <div class="ci-label">Location</div>
+      <div class="ci-value">서울특별시 성동구 성수동</div>
+    </div>
+    <div class="contact-info-item">
+      <div class="ci-label">Founded</div>
+      <div class="ci-value">2024, Seoul</div>
+    </div>
+    <div class="contact-info-item">
+      <div class="ci-label">Frequency</div>
+      <div class="ci-value">Quarterly / 계간</div>
+    </div>
+    <div class="contact-info-item">
+      <div class="ci-label">Language</div>
+      <div class="ci-value">한국어 · English</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">K/Style</span>
+  <span class="footer-copy">© 2025 K/Style Magazine. All rights reserved.</span>
+  <span class="footer-kr">한국 패션의 기록</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
