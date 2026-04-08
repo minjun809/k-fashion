@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --color-brand-black: #000000;
+  --color-brand-white: #FFFFFF;
+  --color-brand-gray: #1A1A1A;
+  --color-brand-silver: #A0A0A0;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-black text-brand-white font-sans antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .chic-card {
+    @apply bg-brand-gray border border-white/10 p-6 transition-all duration-500 hover:border-white/30;
+  }
+
+  .chic-button {
+    @apply px-8 py-3 border border-white text-white uppercase tracking-[0.2em] text-xs font-medium transition-all duration-300 hover:bg-white hover:text-black;
+  }
+
+  .chic-label {
+    @apply text-[10px] uppercase tracking-[0.3em] text-brand-silver font-semibold;
+  }
+}
+
+/* Custom scrollbar for chic look */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
